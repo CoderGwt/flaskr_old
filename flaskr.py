@@ -35,7 +35,18 @@ def connect_db():
     return rv
 
 
+def get_db():
+    if not hasattr(g, "sqlite_db"):
+        g.sqlite_db = connect_db()
+    return g.sqlite_db
+
+
+@app.teardown_appcontext  # 被这个装饰器装饰的函数会在每次应用环境销毁时调用
+def close_db(error):
+    if hasattr(g, 'sqlite_db'):
+        g.sqlite_db.close()
+
+
 if __name__ == '__main__':
     app.run(debug=True)
-
 
